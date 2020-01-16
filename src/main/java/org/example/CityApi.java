@@ -18,37 +18,20 @@ public class CityApi {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-
             if (conn.getResponseCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "
                         + conn.getResponseCode());
             }
-
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
-
             String buffer;
             StringBuilder sb = new StringBuilder();
             System.out.println("Output from Server .... \n");
             while ((buffer = br.readLine()) != null) {
                 sb.append(buffer);
             }
-            //System.out.println(sb);
-            JSONObject jsonObjcet = new JSONObject(sb.toString());
-
-            JSONObject cityObjcet = (JSONObject) jsonObjcet.get("city");
-
-            CityBean cityBean = new CityBean();
-            cityBean.setName(cityObjcet.has("name")? cityObjcet.getString("name"): "");
-            cityBean.setLat(cityObjcet.has("lat")? cityObjcet.get("lat").toString(): "");
-            cityBean.setLon(cityObjcet.has("lon")? cityObjcet.get("lon").toString(): "");
-
-
-            System.out.println("Details of JSONObject");
-
-            System.out.println(cityBean.getName());
-            System.out.println(cityBean.getLat());
-            System.out.println(cityBean.getLon());
+           CityBean cityBean =  getCityObject(sb.toString());
+            System.out.println(cityBean.getLat()+"\t"+cityBean.getLon());
 
         } catch (MalformedURLException e) {
 
@@ -58,5 +41,28 @@ public class CityApi {
 
             e.printStackTrace();
         }
+    }
+
+    /**
+     * This method print the values of the cityObject in JSON Response
+     * @param response
+     */
+    private static CityBean getCityObject(String response) {
+        JSONObject jsonObjcet = new JSONObject(response);
+
+        JSONObject cityObjcet = (JSONObject) jsonObjcet.get("city");
+
+        CityBean cityBean = new CityBean();
+        cityBean.setName(cityObjcet.has("name") ? cityObjcet.getString("name") : "");
+        cityBean.setLat(cityObjcet.has("lat") ? cityObjcet.get("lat").toString() : "");
+        cityBean.setLon(cityObjcet.has("lon") ? cityObjcet.get("lon").toString() : "");
+        return cityBean;
+
+//
+//        System.out.println("Details of JSONObject");
+//
+//        System.out.println(cityBean.getName());
+//        System.out.println(cityBean.getLat());
+//        System.out.println(cityBean.getLon());
     }
 }
